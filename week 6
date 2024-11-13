@@ -74,3 +74,11 @@ select ename from employee where mgr_no=(select max(mgr_no)from employee);
 select ename from employee where sal>(select avg(sal)from employee);
 
 select ename from employee where sal=(select max(sal)from employee where sal<(select max(sal) from employee));
+
+select * from employee where empno=(select empno from incentives where sal=(select max(sal) from incentives where sal<(select max(sal) from incentives)))
+
+SELECT e1.empno AS EmployeeID, e1.ename AS EmployeeName, e1.no AS EmployeeDeptNo,
+       e1.mgr_no AS ManagerID, e2.no AS ManagerDeptNo
+FROM employee e1
+LEFT JOIN employee e2 ON e1.mgr_no = e2.empno;
+
