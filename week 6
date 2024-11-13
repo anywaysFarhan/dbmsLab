@@ -1,0 +1,76 @@
+create database employee_database011;
+use employee_database011;
+
+create table dept(no varchar(30) primary key, dname varchar(30), dloc varchar(30));
+
+
+create table employee(empno int, ename varchar(40), mgr_no int, hiredate varchar(40),
+sal float, no varchar(40), primary key(empno, no),foreign key(no) references dept(no));
+
+create table project(pno int primary key, ploc varchar(40), pname varchar(40));
+
+create table incentives(empno int, incentives_date date primary key, incentives_amount int,  foreign key(empno) references employee(empno));
+
+create table assignedto(empno int, pno int, job_role varchar(40), primary key(empno, pno), foreign key(empno)
+ references employee(empno), foreign key(pno) references project(pno));
+ 
+ 
+insert into dept values(1, "CSE", "Bangalore");
+insert into dept values(2, "ISE", "PJ");
+insert into dept values(3, "CSDS", "Bangalore");
+insert into dept values(4, "ECE", "PG");
+insert into dept values(5, "AIML", "PJ");
+
+
+insert into employee values(101, "mdr", 100, "1999-01-12", 100000, 1);
+insert into employee values(201, "sak", 200, "2020-01-17", 50000, 2);
+insert into employee values(301, "grp", 100, "2004-09-01", 30000, 3);
+insert into employee values(401, "sws", 101, "2000-08-03", 10000, 4);
+insert into employee values(501, "sks", 101, "2008-02-29", 90000, 5);
+
+
+insert into incentives values(101, "2004-03-12", 50000);
+insert into incentives values(201, "2024-03-17", 25000);
+insert into incentives values(301, "2019-12-01", 15000);
+insert into incentives values(401, "2019-11-03", 5000);
+insert into incentives values(501, "2019-04-29", 45000);
+
+
+insert into project values(10, "Bangalore", "chatbot");
+insert into project values(40, "Delhi", "ml model");
+insert into project values(50, "Bombay", "blockchain");
+insert into project values(30, "Chennai", "stocks");
+insert into project values(80, "Mysore", "android app");
+
+
+insert into assignedto values(101, 10, "devops");
+insert into assignedto values(201, 40, "sale");
+insert into assignedto values(301, 50, "manager");
+insert into assignedto values(401, 30, "jpa");
+insert into assignedto values(501, 80, "pa");
+
+select * from dept;
+select * from employee;
+select * from incentives;
+select * from project;
+select * from assignedto;
+
+
+select a.empno from assignedto a 
+where a.pno=any (select pno from project where ploc in ("Bangalore", "Hyderabad", "Mysore"));
+
+select e.empno from employee e where
+e.empno != all (select i.empno from incentives i);
+
+select e.empno, e.ename, d.dname , 
+a.job_role, d.dloc, p.ploc from employee e,
+dept d, assignedto a , project p where 
+e.no=d.no and e.empno=a.empno and
+a.pno=p.pno and d.dloc=p.ploc;
+
+
+select ename from employee where mgr_no=(select max(mgr_no)from employee);
+
+select ename from employee where sal>(select avg(sal)from employee);
+
+select ename from employee where sal=(select max(sal)from employee where sal<(select max(sal) from employee));
